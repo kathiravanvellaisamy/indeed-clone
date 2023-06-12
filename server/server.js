@@ -15,6 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(errorHandler);
 
 app.use("/api/joblisting", require("./routes/jobRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 app.listen(port, () => {
   console.log(`server started on http://localhost:${port}`);
