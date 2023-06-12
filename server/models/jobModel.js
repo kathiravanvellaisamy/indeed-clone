@@ -19,10 +19,10 @@ const jobSchema = mongoose.Schema(
       required: [true, "Please add a Salary"],
     },
     description: {
-      type: te,
+      type: String,
       required: [true, "Please add a description"],
     },
-    Email: {
+    email: {
       type: String,
       required: [true, "Please add a Contact Email"],
     },
