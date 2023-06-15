@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Joblist = require("../models/jobModel");
+const User = require("../models/userModel");
 
 // @desc GET All Jobs list
 // @route GET /api/joblisting
@@ -71,6 +72,7 @@ const postJob = asyncHandler(async (req, res) => {
     email: req.body.email,
     website: req.body.website,
     phone: req.body.phone,
+    user: req.user.id,
   });
   res.status(200).json(job);
 });
@@ -84,6 +86,20 @@ const updateJob = asyncHandler(async (req, res) => {
   if (!job) {
     res.status(400);
     throw new Error("Job not Found");
+  }
+
+  const user = await User.findById(req.user.id);
+
+  //Check for User
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Make sure the logged in user matches the job user
+  if (job.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   const updatedJob = await Joblist.findByIdAndUpdate(req.params.id, req.body, {
@@ -102,6 +118,21 @@ const deleteJob = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Job not Found");
   }
+
+  const user = await User.findById(req.user.id);
+
+  //Check for User
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Make sure the logged in user matches the job user
+  if (job.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
   await Joblist.findByIdAndDelete(req.params.id);
   res.status(200).json({ id: req.params.id });
 });
